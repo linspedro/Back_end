@@ -1,13 +1,26 @@
-const { Usuario, Criar, buscarPorEmail } = require("../modelos/usuario");
+const { Usuario, Criar, buscarPorEmail, buscarId } = require("../modelos/usuario");
 
 const bcrypt = require("bcrypt");
+
+//buscar usuario
+async function buscarUsuario(req,res) {
+  const id = parseInt(req.params.id)
+  const usuario = await buscarId(id)
+
+  if(!usuario){
+    return res.status(400).json({erro: "Usuario não encontrado"})
+  }
+
+  res.json(usuario)
+}
+
 
 // criando usuario
 async function criarUsuario(req, res) {
   console.log("BODY RECEBIDO:", req.body);
 
   if (!req.body) {
-    return res.status(400).json({
+    return res.status(404).json({
       erro: "Nenhum body foi enviado",
     });
   }
@@ -46,8 +59,7 @@ async function criarUsuario(req, res) {
 
 
 
-
 module.exports = {
-  criarUsuario,
+  criarUsuario, buscarUsuario
     
 };

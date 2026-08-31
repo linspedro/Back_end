@@ -32,6 +32,14 @@ async function buscarPorEmail(email) {
   return resultado.rows[0];
 }
 
+// buscar usuario especifico por id 
+
+async function buscarId(id) {
+  const resultado = await pool.query("select *from usuario where id_usuario = $1", [id])
+  return resultado.rows[0]
+  
+}
 
 
-module.exports = { Usuario, Criar, buscarPorEmail, };
+
+module.exports = { Usuario, Criar, buscarPorEmail,buscarId };
