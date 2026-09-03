@@ -42,4 +42,6 @@ async function buscarId(id) {
 
 
 
+
+
 module.exports = { Usuario, Criar, buscarPorEmail,buscarId };

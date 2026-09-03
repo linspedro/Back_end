@@ -21,7 +21,9 @@ const pool = require("./modelos/database");
 
 //rotas de cada arquivo
 const usu = require("./Rotas/usuario")
-app.use(usu)
+const planejamento = require("./Rotas/planejamento_rota")
+app.use("/usuarios", usu)
+app.use("/Planejamento",planejamento)
 
 app.get("/teste_do_banco_dados", async (req, res) => {
   const hora = await pool.query("select now()");

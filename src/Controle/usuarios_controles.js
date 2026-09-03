@@ -59,6 +59,8 @@ async function criarUsuario(req, res) {
 
 
 
+
+
 module.exports = {
   criarUsuario, buscarUsuario
     
