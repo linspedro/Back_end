@@ -86,4 +86,14 @@ async function deletar(id) {
   return resultado.rows[0];
 }
 
-module.exports = { Aulas, criar, buscar, listar, deletar };
+// criarAula.js
+async function listarPorUsuario(id_usuario) {
+  const resultado = await pool.query(
+    "select * from aula where id_usuario = $1 order by id_aula",
+    [id_usuario]
+  );
+  return resultado.rows;
+}
+// adiciona listarPorUsuario no module.exports
+
+module.exports = { Aulas, criar, buscar, listar, deletar,listarPorUsuario };

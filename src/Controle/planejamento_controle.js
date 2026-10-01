@@ -3,6 +3,7 @@ const {
   buscar: buscarPlanejamento,
   deletar: deletarPlanejamento,
   listar: listarPlanejamentos,
+  listarPorUsuario: listarPlanejamentosPorUsuario,   // ← adiciona essa linha
 } = require("../modelos/planejamento");
 
 const { buscarId } = require("../modelos/usuario");
@@ -37,6 +38,7 @@ async function criar(req, res) {
     turma,
     materia,
     trimestre,
+    periodo,                    // ← adicionado
     componentesCurriculares,
     habilidades,
     objetivos,
@@ -47,7 +49,7 @@ async function criar(req, res) {
     materiaisNecessarios,
   } = req.body;
 
-  if (!idusuario || !turma || !materia || !trimestre || !componentesCurriculares ||
+  if (!idusuario || !turma || !materia || !trimestre || !periodo || !componentesCurriculares ||  // ← adicionado
       !habilidades || !objetivos || !quantidadeDeAulas || !provasETrabalhos ||
       !formativaSomativa || !criterios || !materiaisNecessarios) {
     return res.status(400).json({ erro: "Campos obrigatórios" });
@@ -64,6 +66,7 @@ async function criar(req, res) {
     turma,
     materia,
     trimestre,
+    periodo,                    // ← adicionado
     componentesCurriculares,
     habilidades,
     objetivos,
@@ -76,8 +79,6 @@ async function criar(req, res) {
 
   res.status(201).json(planejamento);
 }
-
-
 // deletar planejamento
 async function deletar(req, res) {
   const id = parseInt(req.params.id);
@@ -99,9 +100,22 @@ async function deletar(req, res) {
 }
 
 
+// no planejamento_controle.js
+async function listarPorUsuario(req, res) {
+  const id_usuario = parseInt(req.params.id_usuario);
+  const planejamentos = await listarPlanejamentosPorUsuario(id_usuario);
+  res.json(planejamentos);
+}
+// lembra de importar listarPorUsuario: listarPorUsuario: listarPlanejamentosPorUsuario
+// e adicionar no module.exports
+
+// em cada um dos 3: Planejamento.js, Aula.js, Atividade.js
+
+
 module.exports = {
   listar,
   buscar,
   criar,
-  deletar
+  deletar,
+  listarPorUsuario
 };

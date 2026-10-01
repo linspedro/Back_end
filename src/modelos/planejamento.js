@@ -37,6 +37,7 @@ async function Criar(dados) {
       turma,
       materia,
       trimestre,
+      periodo,
       componentes_curriculares,
       habilidades,
       objetivo,
@@ -47,8 +48,8 @@ async function Criar(dados) {
       materiais_necessarios
     )
     VALUES (
-      $1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12
+      $1, $2, $3, $4, $5, $6, $7,
+      $8, $9, $10, $11, $12, $13
     )
     RETURNING *`,
     [
@@ -56,6 +57,7 @@ async function Criar(dados) {
       dados.turma,
       dados.materia,
       dados.trimestre,
+      dados.periodo,
       dados.componentesCurriculares,
       dados.habilidades,
       dados.objetivos,
@@ -98,10 +100,23 @@ async function deletar(id) {
     return resultado.rowCount > 0
 }
 
+async function listarPorUsuario(id_usuario) {
+  const resultado = await pool.query(
+    "select * from planejamento where id_usuario = $1 order by id_planejamento",
+    [id_usuario]
+  );
+  return resultado.rows;
+}
+
+
+
+
+
 module.exports = {
   Planejamento,
   Criar,
   buscar,
   listar,
-  deletar
+  deletar,
+  listarPorUsuario
 };

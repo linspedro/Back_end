@@ -7,6 +7,7 @@ router.get("/", planejamentoController.listar )
 router.get("/:id", planejamentoController.buscar)
 router.post("/criando_planejamento", planejamentoController.criar)
 router.delete("/:id", planejamentoController.deletar)
+router.get("/usuario/:id_usuario", planejamentoController.listarPorUsuario);
 
 
 

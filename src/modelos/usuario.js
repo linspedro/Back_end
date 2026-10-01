@@ -32,16 +32,23 @@ async function buscarPorEmail(email) {
   return resultado.rows[0];
 }
 
-// buscar usuario especifico por id 
+// buscar usuario especifico por id
 
 async function buscarId(id) {
-  const resultado = await pool.query("select *from usuario where id_usuario = $1", [id])
-  return resultado.rows[0]
-  
+  const resultado = await pool.query(
+    "select *from usuario where id_usuario = $1",
+    [id],
+  );
+  return resultado.rows[0];
 }
 
+async function login(email, senha) {
+  const resultado = await pool.query(
+    "select * from usuario where email = $1 and senha = $2",
+    [email, senha],
+  );
 
+  return resultado.rows[0];
+}
 
-
-
-module.exports = { Usuario, Criar, buscarPorEmail,buscarId };
+module.exports = { Usuario, Criar, buscarPorEmail, buscarId, login };
