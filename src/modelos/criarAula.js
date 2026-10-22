@@ -1,4 +1,4 @@
-const pool = require("./database"); 
+const pool = require("./database");
 
 class Aulas {
   constructor(
@@ -32,18 +32,11 @@ class Aulas {
 async function criar(dados) {
   const resultado = await pool.query(
     `insert into aula (
-      id_usuario,
-      id_planejamento,
-      titulo_da_aula,
-      turma,
-      materia,
-      habilidades,
-      objetivos,
-      criterios,
-      materiais_necessarios,
-      data_da_aula
+      id_usuario, id_planejamento, titulo_da_aula, turma, materia,
+      habilidades, objetivos, criterios, materiais_necessarios,
+      data_da_aula, desenvolvimento, duracao, metodologia, observacoes
     )
-    values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+    values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
     RETURNING *`,
     [
       dados.id_usuario,
@@ -56,6 +49,10 @@ async function criar(dados) {
       dados.criterios,
       dados.materiais_necessarios,
       dados.data_da_aula,
+      dados.desenvolvimento,
+      dados.duracao,
+      dados.metodologia,
+      dados.observacoes,
     ]
   );
 
@@ -86,7 +83,7 @@ async function deletar(id) {
   return resultado.rows[0];
 }
 
-// criarAula.js
+// listar as aulas de um usuário
 async function listarPorUsuario(id_usuario) {
   const resultado = await pool.query(
     "select * from aula where id_usuario = $1 order by id_aula",
@@ -94,6 +91,5 @@ async function listarPorUsuario(id_usuario) {
   );
   return resultado.rows;
 }
-// adiciona listarPorUsuario no module.exports
 
-module.exports = { Aulas, criar, buscar, listar, deletar,listarPorUsuario };
+module.exports = { Aulas, criar, buscar, listar, deletar, listarPorUsuario };

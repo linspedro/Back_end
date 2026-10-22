@@ -1,9 +1,11 @@
 //Ferramentas
+require('dotenv').config()
 const express = require("express");
 const cors = require("cors");
 
 //cria a aplicação
 const app = express();
+
 
 // rota raiz
 app.use(cors());
@@ -20,13 +22,15 @@ const pool = require("./modelos/database");
 const usu = require("./Rotas/usuario");
 const planejamento = require("./Rotas/planejamento_rota");
 const aulas = require("./Rotas/aulas_rotas");
-const rotasAtividade = require("./Rotas/atividade");
+
 const rotasPlanejamentoConteudo = require("./Rotas/planejamentoConteudo");
+const rotasAtividade = require("./Rotas/atividade");
 app.use("/planejamento-conteudo", rotasPlanejamentoConteudo);
 app.use("/usuarios", usu);
 app.use("/Planejamento", planejamento);
 app.use("/aulas", aulas);
 app.use("/atividades", rotasAtividade);
+
 
 app.get("/teste_do_banco_dados", async (req, res) => {
   const hora = await pool.query("select now()");

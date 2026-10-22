@@ -1,17 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  listar,
-  buscar,
-  Criar,
-  deletar,
-} = require("../Controle/atividade_controles");
+const atividadeControle = require("../Controle/atividade_controles");
 
-router.get("/atividades", listar);
-router.get("/atividades/:id", buscar);
-router.post("/atividades", Criar);
-router.delete("/atividades/:id", deletar);
-// router.get("/usuario/:id_usuario", atividadeController.listarPorUsuario);
+router.get("/", atividadeControle.listar);
+router.get("/usuario/:id_usuario", atividadeControle.listarPorUsuario);
+router.get("/:id", atividadeControle.buscar);
+router.post("/", atividadeControle.Criar);
+router.post("/gerar", atividadeControle.gerarComIA);
+router.delete("/:id", atividadeControle.deletar);
 
 module.exports = router;
