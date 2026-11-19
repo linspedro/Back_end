@@ -33,8 +33,20 @@ app.use("/atividades", rotasAtividade);
 
 
 app.get("/teste_do_banco_dados", async (req, res) => {
-  const hora = await pool.query("select now()");
-  res.json(hora.rows);
+  try {
+    const resultado = await pool.query("SELECT NOW()");
+    res.json({
+      mensagem: "Conexão com o banco realizada!",
+      horario: resultado.rows[0].now
+    });
+  } catch (erro) {
+    console.error("Erro ao conectar ao banco:", erro.message);
+
+    res.status(500).json({
+      mensagem: "Erro ao conectar ao banco de dados",
+      erro: erro.message
+    });
+  }
 });
 
 module.exports = app;
