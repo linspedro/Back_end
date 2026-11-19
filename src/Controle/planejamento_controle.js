@@ -3,7 +3,8 @@ const {
   buscar: buscarPlanejamento,
   deletar: deletarPlanejamento,
   listar: listarPlanejamentos,
-  listarPorUsuario: listarPlanejamentosPorUsuario,   // ← adiciona essa linha
+  listarPorUsuario: listarPlanejamentosPorUsuario,
+  atualizar: atualizarPlanejamento,
 } = require("../modelos/planejamento");
 
 const { buscarId } = require("../modelos/usuario");
@@ -106,6 +107,86 @@ async function listarPorUsuario(req, res) {
   const planejamentos = await listarPlanejamentosPorUsuario(id_usuario);
   res.json(planejamentos);
 }
+
+
+const CAMPOS_TEXTO = [
+  "turma",
+  "materia",
+  "trimestre",
+  "periodo",
+  "componentes_curriculares",
+  "habilidades",
+  "objetivo",
+  "provas_trabalhos",
+  "formativa_somativa",
+  "criterios",
+  "materiais_necessarios",
+];
+
+// esses não podem ficar vazios
+const OBRIGATORIOS_EDICAO = ["turma", "materia", "trimestre"];
+
+async function atualizar(req, res) {
+  const id = parseInt(req.params.id);
+  const body = req.body || {};
+
+  if (!body.id_usuario) {
+    return res.status(400).json({ erro: "Envie o id_usuario." });
+  }
+
+  const planejamento = await buscarPlanejamento(id);
+
+  if (!planejamento) {
+    return res.status(404).json({ erro: "Planejamento não encontrado" });
+  }
+
+  if (Number(planejamento.id_usuario) !== Number(body.id_usuario)) {
+    return res
+      .status(403)
+      .json({ erro: "Você não pode editar este planejamento." });
+  }
+
+  const dados = {};
+
+  for (const campo of CAMPOS_TEXTO) {
+    // campo não enviado: o banco mantém o valor atual
+    if (body[campo] === undefined || body[campo] === null) {
+      dados[campo] = null;
+      continue;
+    }
+
+    const valor = String(body[campo]).trim();
+
+    if (!valor && OBRIGATORIOS_EDICAO.includes(campo)) {
+      return res.status(400).json({
+        erro: `O campo ${campo.replaceAll("_", " ")} não pode ficar vazio.`,
+      });
+    }
+
+    dados[campo] = valor;
+  }
+
+  const bruto = body.quantidade_de_aula;
+
+  if (bruto === undefined || bruto === null || bruto === "") {
+    dados.quantidade_de_aula = null;
+  } else {
+    const numero = Number.parseInt(bruto, 10);
+
+    if (Number.isNaN(numero) || numero < 0) {
+      return res
+        .status(400)
+        .json({ erro: "O número total de aulas precisa ser um número válido." });
+    }
+
+    dados.quantidade_de_aula = numero;
+  }
+
+  const atualizado = await atualizarPlanejamento(id, dados);
+  res.json(atualizado);
+}
+
+
 // lembra de importar listarPorUsuario: listarPorUsuario: listarPlanejamentosPorUsuario
 // e adicionar no module.exports
 

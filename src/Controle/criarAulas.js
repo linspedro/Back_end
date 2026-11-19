@@ -5,6 +5,7 @@ const {
   deletar: deletarAulas,
   listar: listarAulas,
   listarPorUsuario: listarAulasPorUsuario,
+  atualizar: atualizarAula,
 } = require("../modelos/criarAula");
 
 const { buscarId } = require("../modelos/usuario");
@@ -167,6 +168,74 @@ async function deletar(req, res) {
   }
 }
 
+const CAMPOS_EDITAVEIS = [
+  "titulo_da_aula",
+  "turma",
+  "materia",
+  "habilidades",
+  "objetivos",
+  "criterios",
+  "materiais_necessarios",
+  "desenvolvimento",
+  "duracao",
+  "metodologia",
+  "observacoes",
+];
+
+// esses não podem ficar vazios
+const OBRIGATORIOS_EDICAO = [
+  "titulo_da_aula",
+  "turma",
+  "materia",
+  "habilidades",
+  "objetivos",
+  "criterios",
+  "materiais_necessarios",
+];
+
+// editar o que a IA (ou o professor) escreveu
+async function atualizar(req, res) {
+  const id = parseInt(req.params.id);
+  const body = req.body || {};
+
+  if (!body.id_usuario) {
+    return res.status(400).json({ erro: "Envie o id_usuario." });
+  }
+
+  const aula = await buscarAulas(id);
+
+  if (!aula) {
+    return res.status(404).json({ erro: "Aula não encontrada" });
+  }
+
+  if (Number(aula.id_usuario) !== Number(body.id_usuario)) {
+    return res.status(403).json({ erro: "Você não pode editar esta aula." });
+  }
+
+  const dados = {};
+
+  for (const campo of CAMPOS_EDITAVEIS) {
+    // campo não enviado: o banco mantém o valor atual
+    if (body[campo] === undefined || body[campo] === null) {
+      dados[campo] = null;
+      continue;
+    }
+
+    const valor = String(body[campo]).trim();
+
+    if (!valor && OBRIGATORIOS_EDICAO.includes(campo)) {
+      return res.status(400).json({
+        erro: `O campo ${campo.replaceAll("_", " ")} não pode ficar vazio.`,
+      });
+    }
+
+    dados[campo] = valor;
+  }
+
+  const atualizada = await atualizarAula(id, dados);
+  res.json(atualizada);
+}
+
 module.exports = {
   listar,
   buscar,
@@ -174,4 +243,5 @@ module.exports = {
   gerarComIA,
   deletar,
   listarPorUsuario,
+  atualizar
 };

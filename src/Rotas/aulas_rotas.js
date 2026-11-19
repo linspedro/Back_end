@@ -8,6 +8,7 @@ router.get("/usuario/:id_usuario", aulasControle.listarPorUsuario);
 router.get("/:id", aulasControle.buscar);
 router.post("/criando_Aulas", aulasControle.Criar);
 router.post("/gerar", aulasControle.gerarComIA);
+router.put("/:id", aulasControle.atualizar);
 router.delete("/:id", aulasControle.deletar);
 
 module.exports = router;

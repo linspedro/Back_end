@@ -72,6 +72,45 @@ async function Criar(dados) {
   return resultado.rows[0];
 }
 
+
+// atualizar um planejamento (campos não enviados mantêm o valor atual)
+async function atualizar(id, dados) {
+  const resultado = await pool.query(
+    `update planejamento set
+      turma = coalesce($1, turma),
+      materia = coalesce($2, materia),
+      trimestre = coalesce($3, trimestre),
+      periodo = coalesce($4, periodo),
+      componentes_curriculares = coalesce($5, componentes_curriculares),
+      habilidades = coalesce($6, habilidades),
+      objetivo = coalesce($7, objetivo),
+      quantidade_de_aula = coalesce($8, quantidade_de_aula),
+      provas_trabalhos = coalesce($9, provas_trabalhos),
+      formativa_somativa = coalesce($10, formativa_somativa),
+      criterios = coalesce($11, criterios),
+      materiais_necessarios = coalesce($12, materiais_necessarios)
+    where id_planejamento = $13
+    RETURNING *`,
+    [
+      dados.turma,
+      dados.materia,
+      dados.trimestre,
+      dados.periodo,
+      dados.componentes_curriculares,
+      dados.habilidades,
+      dados.objetivo,
+      dados.quantidade_de_aula,
+      dados.provas_trabalhos,
+      dados.formativa_somativa,
+      dados.criterios,
+      dados.materiais_necessarios,
+      id,
+    ]
+  );
+
+  return resultado.rows[0];
+}
+
 //buscar um planejamento pelo id
 async function buscar(id) {
   const resultado = await pool.query(
@@ -111,12 +150,12 @@ async function listarPorUsuario(id_usuario) {
 
 
 
-
 module.exports = {
   Planejamento,
   Criar,
   buscar,
   listar,
   deletar,
-  listarPorUsuario
+  listarPorUsuario,
+  atualizar,
 };

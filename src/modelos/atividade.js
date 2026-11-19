@@ -31,6 +31,34 @@ async function criar(dados) {
   return resultado.rows[0];
 }
 
+// atualizar uma atividade (campos não enviados mantêm o valor atual)
+async function atualizar(id, dados) {
+  const resultado = await pool.query(
+    `update atividade set
+      titulo_da_atividade = coalesce($1, titulo_da_atividade),
+      turma = coalesce($2, turma),
+      materia = coalesce($3, materia),
+      duracao = coalesce($4, duracao),
+      objetivo = coalesce($5, objetivo),
+      descricao = coalesce($6, descricao),
+      observacoes = coalesce($7, observacoes)
+    where id_atividade = $8
+    RETURNING *`,
+    [
+      dados.titulo_da_atividade,
+      dados.turma,
+      dados.materia,
+      dados.duracao,
+      dados.objetivo,
+      dados.descricao,
+      dados.observacoes,
+      id,
+    ]
+  );
+
+  return resultado.rows[0];
+}
+
 async function buscar(id) {
   const resultado = await pool.query(
     "SELECT * FROM atividade WHERE id_atividade = $1",
@@ -72,4 +100,5 @@ module.exports = {
   listar,
   listarPorUsuario,
   deletar,
+  atualizar
 };

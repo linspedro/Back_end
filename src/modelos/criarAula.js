@@ -1,5 +1,41 @@
 const pool = require("./database");
 
+// atualizar uma aula (campos não enviados mantêm o valor atual)
+async function atualizar(id, dados) {
+  const resultado = await pool.query(
+    `update aula set
+      titulo_da_aula = coalesce($1, titulo_da_aula),
+      turma = coalesce($2, turma),
+      materia = coalesce($3, materia),
+      habilidades = coalesce($4, habilidades),
+      objetivos = coalesce($5, objetivos),
+      criterios = coalesce($6, criterios),
+      materiais_necessarios = coalesce($7, materiais_necessarios),
+      desenvolvimento = coalesce($8, desenvolvimento),
+      duracao = coalesce($9, duracao),
+      metodologia = coalesce($10, metodologia),
+      observacoes = coalesce($11, observacoes)
+    where id_aula = $12
+    RETURNING *`,
+    [
+      dados.titulo_da_aula,
+      dados.turma,
+      dados.materia,
+      dados.habilidades,
+      dados.objetivos,
+      dados.criterios,
+      dados.materiais_necessarios,
+      dados.desenvolvimento,
+      dados.duracao,
+      dados.metodologia,
+      dados.observacoes,
+      id,
+    ]
+  );
+
+  return resultado.rows[0];
+}
+
 class Aulas {
   constructor(
     id_aula,
@@ -92,4 +128,4 @@ async function listarPorUsuario(id_usuario) {
   return resultado.rows;
 }
 
-module.exports = { Aulas, criar, buscar, listar, deletar, listarPorUsuario };
+module.exports = { Aulas, criar, buscar, listar, deletar, listarPorUsuario, atualizar };
